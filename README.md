@@ -1,0 +1,114 @@
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/logo_full_dark.svg">
+    <img alt="Datapages" src="docs/logo_full.svg" width="480">
+  </picture>
+</p>
+
+[![CI](https://github.com/romshark/datapages/actions/workflows/ci.yml/badge.svg)](https://github.com/romshark/datapages/actions/workflows/ci.yml)
+[![golangci-lint](https://github.com/romshark/datapages/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/romshark/datapages/actions/workflows/golangci-lint.yml)
+[![Coverage Status](https://coveralls.io/repos/github/romshark/datapages/badge.svg?branch=main)](https://coveralls.io/github/romshark/datapages?branch=main)
+[![Go Reference](https://pkg.go.dev/badge/github.com/romshark/datapages.svg)](https://pkg.go.dev/github.com/romshark/datapages)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Release](https://img.shields.io/github/v/release/romshark/datapages)](https://github.com/romshark/datapages/releases/latest)
+
+[![Discord](https://img.shields.io/badge/Discord-%23datapages-5865F2?logo=discord&logoColor=white)](https://discord.com/channels/1296224603642925098/1464634812135505940)
+[![Slack](https://img.shields.io/badge/Slack-%23datapages-4A154B?logo=slack&logoColor=white)](https://gophers.slack.com/archives/C0AKMFC1M2A)
+
+> [!NOTE]
+> **Beta:** Datapages is ready for production use.
+> APIs are close to stable but can still change.
+
+A [Templ](https://templ.guide) + Go + [Datastar](https://data-star.dev) web framework and toolset for building GUI apps and web application in pure Go - no matter whether it's a **real-time collaborative dynamic web app**, a simple [HTMX](https://htmx.org/)-style website, or an installable local-first GUI app.
+
+See [FAQ.md](FAQ.md) for frequently asked questions.
+
+### Utilize AI agents more efficiently
+
+Datapages will provide your coding agents with the skills and CLI tools they need to generate well performing, resource-efficient apps and keep the code base coherent and maintainable, lowering token-usage, reducing potential for bugs and vulnerabilities as well as slowing the accumulation of technical debt.
+
+### Focus on your business logic
+
+Datapages parses your app source packages, lints them, reports errors, and generates all the wiring and boilerplate. Routing, sessions and authentication, SSE streams, per-tab server-side state, CSRF protection, type-safe URL and action helpers, Prometheus metrics, JavaScript service workers etc. - so your application code stays clean and takes full advantage of Go's strong static typing and high performance.
+
+## Examples
+
+- [`counter`](example/counter/): Real-time counter built 2 times in 1 module, bare bones as `app/simple` and polished as `app/fancy`. Bare bones starting point, and the example of a module that builds more than 1 application.
+- [`todolist`](example/todolist/): Real-time collaborative todo list with per-tab server-side state (Most [Tao](https://data-star.dev/guide/the_tao_of_datastar) conform example).
+- [`calculator`](example/calculator/): Hybrid calculator app that runs both as a multi-client server and single-client Desktop app.
+- [`classifieds`](example/classifieds/): Full-featured classifieds marketplace with sessions, auth, Prometheus metrics, Grafana dashboards and load testing.
+- [`tailwindcss`](example/tailwindcss/): Minimal static page demonstrating Tailwind CSS integration.
+- [`webcomponents`](example/webcomponents/): Landing page with vanilla and [Lit](https://lit.dev)-based Web Components bundled via esbuild through a custom watcher.
+- [`sqlitesessions`](example/sqlitesessions/): Custom `sessions.Manager` implementation backed by SQLite via [sqinn-go](https://github.com/cvilsmeier/sqinn-go) (no cgo).
+- [`fast-shim`](example/fast-shim/): A cached placeholder shown immediately and replaced with the live response.
+- [`offline-cache`](example/offline-cache/): Service worker support with handler-cached pages, a `PageOffline` fallback, and tickets available without a connection.
+- [`file-upload`](example/file-upload/): Chunked file uploads to disk that can be paused, resumed and continued after a reload or a server restart, with server-enforced transfer limits.
+- [`docs`](example/docs/): Google Docs-style real-time collaborative rich text editor built on [Quill](https://quilljs.com), with OT (operational transformation) in Go.
+
+## Getting Started
+
+See the [Guide](GUIDE.md).
+
+## Specification
+
+See [SPECIFICATION.md](SPECIFICATION.md) for the full source package specification, including handler signatures, parameters, return values, events, sessions, and modules.
+
+## Modules
+
+Datapages ships pluggable modules with swappable implementations:
+
+- [`Manager[Data]`](modules/sessions/sessions.go)
+  - [`natskv`](https://pkg.go.dev/github.com/romshark/datapages/modules/sessions/natskv) - NATS KV store with AES-128-GCM encrypted cookies
+  - [`inmem`](https://pkg.go.dev/github.com/romshark/datapages/modules/sessions/inmem) - In-memory sessions (lost on restart; single-instance only)
+- [`Broker`](modules/messaging/messaging.go)
+  - [`natscore`](https://pkg.go.dev/github.com/romshark/datapages/modules/messaging/natscore) - Core NATS backed message broker
+  - [`inmem`](https://pkg.go.dev/github.com/romshark/datapages/modules/messaging/inmem) - In-memory fan-out message broker (single-instance only)
+- [`TokenWriter`, `TokenValidator`](modules/csrf/csrf.go)
+  - [`Tokens`](modules/csrf/tokens.go) - the built-in default: HMAC-SHA256 over the session token under a fixed domain-separator key, BREACH-resistant masking, nothing to configure
+- [`TokenGenerator`](modules/sessions/sessions.go)
+
+## Motivation
+
+The reason I built Datapages is that the combination of [Datastar](https://data-star.dev) + [Go](https://go.dev) + [Templ](https://templ.guide) is my preferred way of writing server-centric web applications. But in every project I used this tech stack for I kept repeating the same code patterns and solving the same problems over and over again. I realized many developers are repeating the same patterns too and struggle with the common pitfalls:
+
+- How to handle SSE streams correctly?
+- How to use NATS effectively?
+- How to approach security and authentication?
+- How to configure a convenient hot-reload for development?
+- How to keep the code maintainable over time, especially when you add more developers and/or AI assistants?
+- How to keep AI coding assistants from drifting too much?
+- How to achieve optimal performance and a good UX for endusers?
+
+Your Datastar frontends are your *rocket* to extraterrestrial worlds of the internet.
+The further you want to go, the heavier a rocket you'll require. Hence, you need powerful boosters to get it off the ground and overcome Earth's gravity. Such boosters exist in the form of awesome templates like [zangster300/northstar](https://github.com/zangster300/northstar), which will quickly get your rocket to the stratosphere and beyond. But power alone is not enough — you also need good stabilizing fins and thrust vectoring to keep your rocket steady as it flies. I felt like this part was lacking in the Go ecosystem of Datastar. By enforcing a common structure of types, methods and other conventions with tooling, Datapages provides not only the power but also the stability your rocket needs to stay in flight for long and consume as little brain fuel as possible.
+
+Not only does Datapages allow you to start quickly with `datapages init` and jump straight into building your application, but it also continuously supports you keeping accidental complexity low by:
+
+- Providing a [Datastar Tao oriented](https://data-star.dev/guide/the_tao_of_datastar) architecture as a good default while preserving enough flexibility to go beyond if you need to.
+- Providing `datapages gen` to generate all boilerplate code consistently and guide you and your AI coding agents.
+- Providing `datapages lint` that can be used in CI/CD workflows for extensive static code analysis.
+- Providing `datapages watch` to give you an interactive hot-reload environment for a fast feedback loop with error reporting directly in the browser preview.
+
+Agentic coding is a big topic right now and likely here to stay. But LLMs tend to drift over time and introduce accidental complexity.
+So for AI to be used more effectively I wanted to provide the skills and instructions necessary for agents to know how to deal with this tech stack and call into Datapages CLI help them when they drift by providing them with useful feedback.
+
+<p>
+  <img alt="Cost comparison: doing it all yourself, using AI assistance, and Datapages plus AI assistance" src="docs/infographic.svg" width="880">
+</p>
+
+## Who This Is For
+
+Datapages is a good fit if you:
+
+- **Already write your backend in Go** and want to build your web frontend in the same language and toolchain.
+- **Are building a server-rendered application**, where the server owns the data; not a local-first offline-capable SPA.
+- **Already use [Datastar](https://data-star.dev)** and want a Go framework to help you ship faster with less code while preserving maintainability.
+- **Already use [Templ](https://templ.guide)** and want a full framework built around it.
+- **Use [HTMX](https://htmx.org/), [idiomorph](https://htmx.org/extensions/idiomorph/) and [Alpine.js](https://alpinejs.dev/)**, and instead want a single cohesive stack with a smaller bundle size and less spaghetti-code.
+- **Don't want to maintain a separate REST/GraphQL API** just to feed your frontend.
+- **Want to deploy as a single, statically compiled binary** that makes the most of your hardware.
+- **Want to develop hybrid desktop apps** in Go and HTML5 (see [Calculator example](https://github.com/romshark/datapages/tree/main/example/calculator))
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and commands, and [AGENTS.md](AGENTS.md) for code style, testing conventions, commit message format and project structure.
